@@ -37,7 +37,7 @@
 static const char* FILE_FILTER = I18N_NOOP("*.keymap|Krusader keymaps\n*|All files");
 
 
-KrKeyDialog::KrKeyDialog(QWidget * parent) : KShortcutsDialog(KShortcutsEditor::AllActions, KShortcutsEditor::LetterShortcutsDisallowed /* allow letter shortcuts */, parent)
+KrKeyDialog::KrKeyDialog(QWidget * parent) : KShortcutsDialog(KShortcutsEditor::AllActions, KShortcutsEditor::LetterShortcutsAllowed /* allow letter shortcuts */, parent)
 {
     addCollection(krApp->actionCollection());
 

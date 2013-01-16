@@ -748,7 +748,7 @@ void KrView::renameCurrentItem()
 bool KrView::handleKeyEvent(QKeyEvent *e)
 {
     if (op()->handleKeyEvent(e))
-        return true;
+        return true; /* if the key event is handled by the view, we are done */
     bool res = handleKeyEventInt(e);
 
     // emit the new item description
@@ -959,6 +959,7 @@ bool KrView::handleKeyEventInt(QKeyEvent *e)
         e->ignore();
         return true; // otherwise the selection gets lost??!??
                      // also it is needed by the panel
+#if (0)  /* remove select all -- this can be configured by user */
     case Qt::Key_A :                 // mark all
         if (e->modifiers() == Qt::ControlModifier) {
             //FIXME: shouldn't there also be a shortcut for unselecting everything ?
@@ -966,6 +967,7 @@ bool KrView::handleKeyEventInt(QKeyEvent *e)
             return true;
         }
         // default continues here !!!!!!!!!!!
+#endif
     default:
         // if the key is A..Z or 1..0 do quick search otherwise...
         if (e->text().length() > 0 && e->text()[ 0 ].isPrint())    // better choice. Otherwise non-ascii characters like  can not be the first character of a filename
