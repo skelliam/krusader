@@ -406,29 +406,27 @@ KrColorGroup KrColorCacheImpl::getColors(const KrColorItemType & type) const
     // cache m_activePanel flag. If color dimming is turned on, it is set to true, as the inactive colors
     // are calculated from the active ones at the end.
     bool isActive = type.m_activePanel;
-    if (dimBackground)
-        isActive = true;
 
     // First calculate fore- and background.
     QColor background = type.m_alternateBackgroundColor ?
-                        getAlternateBackgroundColor(isActive)
-                        : getBackgroundColor(isActive);
+                        getAlternateBackgroundColor((isActive || dimBackground))
+                        : getBackgroundColor((isActive || dimBackground));
     QColor foreground;
     switch (type.m_fileType) {
     case KrColorItemType::Directory :
-        foreground = getSpecialForegroundColor("Directory", isActive);
+        foreground = getSpecialForegroundColor("Directory", (isActive || dimBackground));
         break;
     case KrColorItemType::Executable :
-        foreground = getSpecialForegroundColor("Executable", isActive);
+        foreground = getSpecialForegroundColor("Executable", (isActive || dimBackground));
         break;
     case KrColorItemType::InvalidSymlink :
-        foreground = getSpecialForegroundColor("Invalid Symlink", isActive);
+        foreground = getSpecialForegroundColor("Invalid Symlink", (isActive || dimBackground));
         break;
     case KrColorItemType::Symlink :
-        foreground = getSpecialForegroundColor("Symlink", isActive);
+        foreground = getSpecialForegroundColor("Symlink", (isActive || dimBackground));
         break;
     default:
-        foreground = getForegroundColor(isActive);
+        foreground = getForegroundColor((isActive || dimBackground));
     }
 
     // set the background color
@@ -439,9 +437,9 @@ KrColorGroup KrColorCacheImpl::getColors(const KrColorItemType & type) const
 
     // now the color of a marked item
     QColor markedBackground = type.m_alternateBackgroundColor ?
-                              getAlternateMarkedBackgroundColor(isActive)
-                              : getMarkedBackgroundColor(isActive);
-    QColor markedForeground = getMarkedForegroundColor(isActive);
+                              getAlternateMarkedBackgroundColor((isActive || dimBackground))
+                              : getMarkedBackgroundColor((isActive || dimBackground));
+    QColor markedForeground = getMarkedForegroundColor((isActive || dimBackground));
     if (!markedForeground.isValid()) // transparent
         // choose fore- or background, depending on its contrast compared to markedBackground
         markedForeground = setColorIfContrastIsSufficient(markedBackground, foreground, background);
@@ -457,9 +455,9 @@ KrColorGroup KrColorCacheImpl::getColors(const KrColorItemType & type) const
     }
 
     // finally the current item
-    if (type.m_currentItem && (markCurrentAlways || isActive)) {
+    if (type.m_currentItem && (isActive || markCurrentAlways)) {
         // if this is the current item AND the panels has the focus OR the current should be marked always
-        QColor currentBackground = getCurrentBackgroundColor(isActive);
+        QColor currentBackground = getCurrentBackgroundColor((isActive || dimBackground));
 
         if (!currentBackground.isValid()) // transparent
             currentBackground = background;
@@ -470,9 +468,9 @@ KrColorGroup KrColorCacheImpl::getColors(const KrColorItemType & type) const
 
         QColor color;
         if (type.m_selectedItem)
-            color = getCurrentMarkedForegroundColor(isActive);
+            color = getCurrentMarkedForegroundColor((isActive || dimBackground));
         if (!color.isValid()) { // not used
-            color = getCurrentForegroundColor(isActive);
+            color = getCurrentForegroundColor((isActive || dimBackground));
             if (!color.isValid()) // transparent
                 // choose fore- or background, depending on its contrast compared to markedBackground
                 color = setColorIfContrastIsSufficient(currentBackground, foreground, background);
